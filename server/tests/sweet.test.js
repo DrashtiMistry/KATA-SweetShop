@@ -91,3 +91,33 @@ describe('PUT /api/sweets/:id', () => {
     expect(res.statusCode).toBe(404);
   });
 });
+
+
+describe('DELETE /api/sweets/:id', () => {
+  it('should delete a sweet by ID', async () => {
+    // First, create a sweet to delete
+    const newSweet = await Sweet.create({
+      name: 'Test Sweet',
+      category: 'Barfi',
+      pricePerKg: 200,
+      availableKg: 10,
+    });
+
+    const res = await request(app).delete(`/api/sweets/${newSweet._id}`);
+    
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toBe('Sweet deleted successfully');
+
+    // Ensure it's deleted from DB
+    const sweetInDb = await Sweet.findById(newSweet._id);
+    expect(sweetInDb).toBeNull();
+  });
+
+  it('should return 404 if sweet not found', async () => {
+    const fakeId = new mongoose.Types.ObjectId();
+    const res = await request(app).delete(`/api/sweets/${fakeId}`);
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toBe('Sweet not found');
+  });
+});

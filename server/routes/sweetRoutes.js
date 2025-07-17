@@ -45,4 +45,15 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+
+// DELETE: Remove sweet
+router.delete('/:id', async (req, res) => {
+  try {
+    await Sweet.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Sweet deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
