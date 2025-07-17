@@ -1,7 +1,7 @@
 # KATA - SweetShop
-# Sweet Shop Management System – Backend (MERN + TDD)
+# Sweet Shop Management System – MERN Stack
 
-This is the **backend** part of the Sweet Shop Management System built using **Node.js**, **Express**, and **MongoDB**. It includes full CRUD operations for sweets and is developed using **Test-Driven Development (TDD)** with **Jest** and **Supertest**.
+A full-fledged **Sweet Shop Management System** built using the **MERN stack** (MongoDB, Express, React, Node.js). This project supports CRUD operations, inventory tracking, category-based filtering, and cart functionality. It includes full CRUD operations for sweets and is developed using **Test-Driven Development (TDD)** with **Jest** and **Supertest**.
 
 
 ## Project Purpose
@@ -38,6 +38,7 @@ The goal of this backend is to:
 | ODM           | Mongoose         |
 | Testing       | Jest, Supertest  |
 | API Tool      | Postman          |
+| Frontend UI   |React.js(Tailwind)|
 
 
 
@@ -53,12 +54,9 @@ The goal of this backend is to:
 | DELETE | `/api/sweets/:id` | Delete a sweet         |
 
 
-### Cart Functionality
 
-| Method | Route                        | Description                            |
-|--------|------------------------------|----------------------------------------|
-| POST   | `/api/cart/:id/add-to-cart`  | Add sweet to cart and decrease stock   |
-
+**Demo Video **:- 
+https://drive.google.com/file/d/1TOj4Z87S9SPEqKYCprCan47RR9a64vdL/view?usp=drive_link
 
 
 
