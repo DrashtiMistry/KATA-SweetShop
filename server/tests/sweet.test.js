@@ -122,3 +122,51 @@ describe('DELETE /api/sweets/:id', () => {
   });
 });
 
+
+describe('GET /api/sweets - Filter by category and price range', () => {
+  beforeAll(async () => {
+    // Seed test data
+    await Sweet.insertMany([
+      { name: 'Kaju Katli', category: 'Barfi', pricePerKg: 250, availableKg: 5 },
+      { name: 'Gulab Jamun', category: 'Mithai', pricePerKg: 180, availableKg: 10 },
+      { name: 'Milk Cake', category: 'Barfi', pricePerKg: 120, availableKg: 7 },
+      { name: 'Rasgulla', category: 'Mithai', pricePerKg: 90, availableKg: 12 },
+    ]);
+  });
+
+  afterAll(async () => {
+    await Sweet.deleteMany(); // Clean up DB
+  });
+
+  it('should return sweets filtered by category', async () => {
+    const res = await request(app).get('/api/sweets?category=Barfi');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(2);
+    res.body.forEach((sweet) => {
+      expect(sweet.category).toBe('Barfi');
+    });
+  });
+
+  it('should return sweets within price range', async () => {
+    const res = await request(app).get('/api/sweets?minPrice=100&maxPrice=200');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(2);
+    res.body.forEach((sweet) => {
+      expect(sweet.pricePerKg).toBeGreaterThanOrEqual(100);
+      expect(sweet.pricePerKg).toBeLessThanOrEqual(200);
+    });
+  });
+
+  it('should return sweets filtered by both category and price range', async () => {
+    const res = await request(app).get('/api/sweets?category=Barfi&minPrice=100&maxPrice=200');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(1);
+    expect(res.body[0].name).toBe('Milk Cake');
+  });
+
+  it('should return an empty array if no sweets match the filters', async () => {
+    const res = await request(app).get('/api/sweets?category=Barfi&minPrice=10&maxPrice=50');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual([]);
+  });
+});

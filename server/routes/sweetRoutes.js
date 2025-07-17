@@ -56,6 +56,41 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// GET /api/sweets with search and sort
+router.get('/', async (req, res) => {
+  try {
+    const { name, category, minPrice, maxPrice, sort } = req.query;
 
+    const filter = {};
+
+    // Search filters
+    if (name) {
+      filter.name = { $regex: name, $options: 'i' }; // case-insensitive
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (minPrice || maxPrice) {
+      filter.pricePerKg = {};
+      if (minPrice) filter.pricePerKg.$gte = parseFloat(minPrice);
+      if (maxPrice) filter.pricePerKg.$lte = parseFloat(maxPrice);
+    }
+
+    // Sorting
+    let sortOption = {};
+    if (sort === 'priceAsc') sortOption.pricePerKg = 1;
+    else if (sort === 'priceDesc') sortOption.pricePerKg = -1;
+    else if (sort === 'nameAsc') sortOption.name = 1;
+    else if (sort === 'nameDesc') sortOption.name = -1;
+
+    const sweets = await Sweet.find(filter).sort(sortOption);
+
+    res.status(200).json(sweets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;
