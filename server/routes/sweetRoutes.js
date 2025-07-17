@@ -93,4 +93,48 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/:id/add-to-cart', async (req, res) => {
+  const { quantity } = req.body;
+
+  if (!quantity || quantity <= 0) {
+    return res.status(400).json({ message: 'Invalid quantity' });
+  }
+
+  try {
+    const sweet = await Sweet.findById(req.params.id);
+    if (!sweet) return res.status(404).json({ message: 'Sweet not found' });
+
+    if (sweet.availableKg < quantity) {
+      return res.status(400).json({ message: 'Not enough stock available' });
+    }
+
+    // Reduce availableKg
+    sweet.availableKg -= quantity;
+    await sweet.save();
+
+    res.status(200).json({
+      message: 'Added to cart',
+      sweetId: sweet._id,
+      remainingStock: sweet.availableKg
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// PATCH /api/sweets/:id/decrease
+router.patch('/:id/decrease', async (req, res) => {
+  try {
+    const sweet = await Sweet.findById(req.params.id);
+    if (!sweet || sweet.availableKg < 1) return res.status(400).send("Out of stock");
+
+    sweet.availableKg -= 1;
+    await sweet.save();
+    res.status(200).json(sweet);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
