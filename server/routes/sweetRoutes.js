@@ -33,4 +33,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT: Update sweet
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedSweet = await Sweet.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.json(updatedSweet);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 module.exports = router;

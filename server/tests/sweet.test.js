@@ -42,3 +42,52 @@ describe('POST /api/sweets', () => {
     expect(res.statusCode).toBe(400);
   });
 });
+
+
+describe('PUT /api/sweets/:id', () => {
+  let sweetId;
+
+  beforeAll(async () => {
+    // Create a sweet to update
+    const sweet = new Sweet({
+      name: 'Gulab Jamun',
+      category: 'Milk Sweet',
+      pricePerKg: 300,
+      availableKg: 5,
+    });
+    const saved = await sweet.save();
+    sweetId = saved._id;
+  });
+
+  it('should update a sweet by ID', async () => {
+    const updatedData = {
+      name: 'Gulab Jamun Special',
+      category: 'Milk Sweet',
+      pricePerKg: 350,
+      availableKg: 8,
+    };
+
+    const res = await request(app)
+      .put(`/api/sweets/${sweetId}`)
+      .send(updatedData);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.name).toBe('Gulab Jamun Special');
+    expect(res.body.pricePerKg).toBe(350);
+  });
+
+  it('should return 404 for non-existent sweet', async () => {
+    const fakeId = new mongoose.Types.ObjectId();
+
+    const res = await request(app)
+      .put(`/api/sweets/${fakeId}`)
+      .send({
+        name: 'Invalid Sweet',
+        category: 'Dry Sweet',
+        pricePerKg: 200,
+        availableKg: 4,
+      });
+
+    expect(res.statusCode).toBe(404);
+  });
+});
